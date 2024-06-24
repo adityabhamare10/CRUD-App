@@ -11,7 +11,8 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="vertical"
-      tools:context=".LoginActivity">
+      tools:context=".LoginActivity"
+      android:background="#DDC9C9">
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -68,7 +69,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginRight="15dp"
         android:text="Login"
-        android:backgroundTint="@color/grey"
+        android:backgroundTint="#3B3A3C"
         android:textSize="17dp"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"

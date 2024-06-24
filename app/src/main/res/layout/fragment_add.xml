@@ -9,7 +9,8 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#DDC9C9">
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -91,7 +92,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginRight="15dp"
             android:text="Submit"
-            android:backgroundTint="@color/grey"
+            android:backgroundTint="#3B3A3C"
             android:textSize="17dp"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
