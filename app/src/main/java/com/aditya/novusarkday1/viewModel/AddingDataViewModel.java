@@ -1,4 +1,8 @@
 package com.aditya.novusarkday1.viewModel;
+import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddingDataViewModel extends ViewModel {
-    private final MutableLiveData<List<String>> listLiveData = new MutableLiveData<>(new ArrayList<>());
+    private static final MutableLiveData<List<String>> listLiveData = new MutableLiveData<>(new ArrayList<>());
+
 
     public LiveData<List<String>> getList() {
         return listLiveData;
@@ -28,4 +33,14 @@ public class AddingDataViewModel extends ViewModel {
             listLiveData.setValue(currentList);
         }
     }
+
+    public static void updateData(int position, String updatedUser) {
+        List<String> currentList = listLiveData.getValue();
+        if (currentList != null && position >= 0 && position < currentList.size()) {
+            currentList.set(position, updatedUser);
+            listLiveData.setValue(currentList);
+//            saveUsers();
+        }
+    }
+
 }
