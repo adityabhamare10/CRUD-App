@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,25 +24,20 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private ListView listView;
-    private ArrayAdapter<String> adapter;
+    private LinearLayout container;
     private AddingDataViewModel addingDataViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        listView = view.findViewById(R.id.listView);
-        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
-        listView.setAdapter(adapter);
+        this.container = view.findViewById(R.id.container);
 
         addingDataViewModel = new ViewModelProvider(requireActivity()).get(AddingDataViewModel.class);
         addingDataViewModel.getList().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
             public void onChanged(List<String> data) {
-                adapter.clear();
-                adapter.addAll(data);
-                adapter.notifyDataSetChanged();
+                updateUI(data);
             }
         });
 
@@ -54,30 +49,58 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            showUpdateDialog(position);
-        });
-
-        listView.setOnItemLongClickListener((parent, view1, position, id) -> {
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Delete Details")
-                    .setMessage("Are you sure you want to delete this details ?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        addingDataViewModel.removeFromList(position);
-                        Toast.makeText(getContext(), "Data deleted", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-            return true;
-        });
-
-
-
-
-
         return view;
     }
+
+    private void updateUI(List<String> data) {
+        container.removeAllViews();
+
+        for (int i = 0; i < data.size(); i++) {
+            String user = data.get(i);
+            View userItemView = LayoutInflater.from(getContext()).inflate(R.layout.layout_items, container, false);
+
+            TextView nameTextView = userItemView.findViewById(R.id.name);
+            TextView emailTextView = userItemView.findViewById(R.id.email);
+            TextView numberTextView = userItemView.findViewById(R.id.number);
+
+            String[] parts = user.split("\n");
+            if (parts.length >= 3) {
+                nameTextView.setText(parts[0].split(": ")[1]);
+                emailTextView.setText(parts[1].split(": ")[1]);
+                numberTextView.setText(parts[2].split(": ")[1]);
+            } else {
+                nameTextView.setText("Name not available");
+                emailTextView.setText("Email not available");
+                numberTextView.setText("Number not available");
+            }
+
+            final int position = i;
+
+            userItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showUpdateDialog(position);
+                }
+            });
+
+            userItemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    showDeleteDialog(position);
+                    return true;
+                }
+            });
+
+            container.addView(userItemView);
+        }
+    }
+
     private void showUpdateDialog(int position) {
+        List<String> dataList = addingDataViewModel.getList().getValue();
+        if (dataList == null || position < 0 || position >= dataList.size()) {
+            return; // Ensure dataList is not null and position is within bounds
+        }
+
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View dialogView = inflater.inflate(R.layout.layout_dialogue_update, null);
 
@@ -85,12 +108,14 @@ public class HomeFragment extends Fragment {
         EditText edtEmail = dialogView.findViewById(R.id.edtEmail);
         EditText edtNumber = dialogView.findViewById(R.id.edtNumber);
 
-        String user = adapter.getItem(position);
+        String user = dataList.get(position);
         if (user != null) {
             String[] parts = user.split("\n");
-            edtName.setText(parts[0].split(": ")[1]);
-            edtEmail.setText(parts[1].split(": ")[1]);
-            edtNumber.setText(parts[2].split(": ")[1]);
+            if (parts.length >= 3) { // Ensure parts has enough elements to prevent ArrayIndexOutOfBoundsException
+                edtName.setText(parts[0].split(": ")[1]);
+                edtEmail.setText(parts[1].split(": ")[1]);
+                edtNumber.setText(parts[2].split(": ")[1]);
+            }
         }
 
         new AlertDialog.Builder(getContext())
@@ -100,10 +125,29 @@ public class HomeFragment extends Fragment {
                     String updatedUser = "Name: " + edtName.getText().toString()
                             + "\nEmail: " + edtEmail.getText().toString()
                             + "\nMobile: " + edtNumber.getText().toString();
-                    AddingDataViewModel.updateData(position, updatedUser);
+                    addingDataViewModel.updateData(position, updatedUser);
                     Toast.makeText(getContext(), "User updated", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
+
+    private void showDeleteDialog(int position) {
+        List<String> dataList = addingDataViewModel.getList().getValue();
+        if (dataList == null || position < 0 || position >= dataList.size()) {
+            return; // Ensure dataList is not null and position is within bounds
+        }
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete User")
+                .setMessage("Are you sure you want to delete this user?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    addingDataViewModel.removeFromList(position);
+                    Toast.makeText(getContext(), "User deleted", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
 }

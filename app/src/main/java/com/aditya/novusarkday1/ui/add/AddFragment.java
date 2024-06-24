@@ -5,12 +5,14 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.aditya.novusarkday1.R;
 import com.aditya.novusarkday1.databinding.FragmentAddBinding;
 import com.aditya.novusarkday1.viewModel.AddingDataViewModel;
 
@@ -32,6 +34,7 @@ public class AddFragment extends Fragment {
                 String name = binding.edtName.getText().toString();
                 String email = binding.edtEmail.getText().toString();
                 String mobile = binding.edtNumber.getText().toString();
+
 
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(mobile)) {
                     Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
