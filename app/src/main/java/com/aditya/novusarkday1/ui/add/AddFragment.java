@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.aditya.novusarkday1.R;
 import com.aditya.novusarkday1.databinding.FragmentAddBinding;
 import com.aditya.novusarkday1.viewModel.AddingDataViewModel;
 
@@ -37,7 +36,7 @@ public class AddFragment extends Fragment {
                 if (TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(mobile)) {
                     Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    String data = "Name: " + name + ", Email: " + email + ", Mobile: " + mobile;
+                    String data = "Name: " + name + "\nEmail: " + email + "\nMobile: " + mobile;
                     addingDataViewModel.addtoList(data);
                     getParentFragmentManager().popBackStack();
                 }

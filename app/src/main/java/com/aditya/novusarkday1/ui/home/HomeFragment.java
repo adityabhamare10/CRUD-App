@@ -1,11 +1,13 @@
 package com.aditya.novusarkday1.ui.home;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -36,9 +38,9 @@ public class HomeFragment extends Fragment {
         addingDataViewModel = new ViewModelProvider(requireActivity()).get(AddingDataViewModel.class);
         addingDataViewModel.getList().observe(getViewLifecycleOwner(), new Observer<List<String>>() {
             @Override
-            public void onChanged(List<String> users) {
+            public void onChanged(List<String> data) {
                 adapter.clear();
-                adapter.addAll(users);
+                adapter.addAll(data);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -50,6 +52,20 @@ public class HomeFragment extends Fragment {
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_navigation_home_to_navigation_add);
             }
         });
+
+        listView.setOnItemLongClickListener((parent, view1, position, id) -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Delete")
+                    .setMessage("Are you sure you want to delete ?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        addingDataViewModel.removeFromList(position);
+                        Toast.makeText(getContext(), "User deleted", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+            return true;
+        });
+
 
         return view;
     }

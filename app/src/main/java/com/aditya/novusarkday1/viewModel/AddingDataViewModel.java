@@ -20,4 +20,12 @@ public class AddingDataViewModel extends ViewModel {
             listLiveData.setValue(currentList);
         }
     }
+
+    public void removeFromList(int position) {
+        List<String> currentList = listLiveData.getValue();
+        if (currentList != null && position >= 0 && position < currentList.size()) {
+            currentList.remove(position);
+            listLiveData.setValue(currentList);
+        }
+    }
 }
